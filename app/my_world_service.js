@@ -47,41 +47,19 @@ function MyWorldService(People, Thing) {
     this.Thing = Thing;
     this.People = People;
     this.getPeople = function(active) {
-        var returnPeople = [];
         if (active) {
-            return this.returnActive();
+            return _.sortBy(_.filter(this.People, function(people){return people.active == true}), "name");
         }
-        return this.People.sort(function(a, b) {
-            return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
-        });
-    }
-    this.returnActive = function() {
-        var returnPeople = [];
-        for (var i in this.People) {
-            if (this.People[i].active) {
-                returnPeople.push(this.People[i]);
-            }
-        }
-        return returnPeople;
+        return _.sortBy(this.People,"name");
     }
     this.getPerson = function(personName) {
-        for (var i in this.People) {
-            if (this.People[i].name == personName) {
-                return this.People[i];
-            }
-        }
+        return _.find(this.People, function(person){return person.name == personName});
     }
     this.getThings = function(){
-        return this.Thing.sort(function(a, b) {
-            return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
-        });
+        return _.sortBy(this.Thing, "name");
     }
     this.getThing = function(thingName){
-        for (var i in this.Thing){
-            if(this.Thing[i].name == thingName){
-                return this.Thing[i];
-            }
-        }
+        return _.find(this.Thing, function(thing){return thing.name == thingName});
     }
     this.acquireThing = function(personName, thingName){
         var person = this.getPerson(personName);
@@ -107,39 +85,15 @@ function MyWorldService(People, Thing) {
         return true;
     }
     this.getPeopleWhoOwnThing = function(thingName){
-        var returnPeople = [];
-        for(var i in this.People){
-            if(this.People[i].hasThing(thingName)){
-                returnPeople.push(this.People[i]);
-            }
-        }
-        return returnPeople;
+        return _.filter(this.People, function(person){ return person.hasThing(thingName);});
     }
     this.getPeopleWhoOwnNothing = function(){
-        var returnPeople = [];
-        for(var i in this.People){
-            if(0 == this.People[i].things.length){
-                returnPeople.push(this.People[i]);
-            }
-        }
-        return returnPeople;
+        return _.filter(this.People, function(person){ return person.things.length == 0;});
     }
     this.getThingsNotOwned = function(){
-        var returnThings = [];
-        for(var i in this.Thing){
-            if(typeof this.Thing[i].numberOwned == "undefined"){
-                returnThings.push(this.Thing[i]);
-            }
-        }
-        return returnThings;
+        return _.filter(this.Thing, function(thing){ return typeof thing.numberOwned == "undefined";});
     }
     this.getThingsOwned = function(){
-        var returnThings = [];
-        for(var i in this.Thing ){
-            if(this.Thing[i].numberOwned > 0){
-                returnThings.push(this.Thing[i]);
-            }
-        }
-        return returnThings;
+        return _.filter(this.Thing, function(thing){return thing.numberOwned > 0});
     }
 }
